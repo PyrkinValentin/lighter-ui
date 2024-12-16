@@ -1,9 +1,17 @@
+"use client"
+
 import { Container } from "@/shared/ui/layout"
+import { Pagination } from "@/shared/ui/pagination_2"
 
 const Home = () => {
 	return (
-		<Container>
-
+		<Container size="xs">
+			<Pagination
+				loop
+				showControls
+				defaultPage={1}
+				totalPages={10}
+			/>
 		</Container>
 	)
 }

@@ -8,7 +8,7 @@ export const dialogVariants = tv({
 	slots: {
 		wrapper: "fixed h-dvh inset-0 flex justify-center overflow-y-auto",
 		base: [
-			"box-border relative max-h-[calc(100%_-_8rem)] mx-1 my-1 sm:mx-4 sm:my-16 p-4 w-full flex flex-col gap-4",
+			"box-border relative mx-1 my-1 sm:mx-4 sm:my-16 p-4 w-full max-h-[calc(100%_-_8rem)] flex flex-col gap-4",
 			"bg-content1 outline-none",
 		],
 		header: "text-lg font-semibold",
