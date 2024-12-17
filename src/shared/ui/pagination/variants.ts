@@ -7,26 +7,23 @@ export type PaginationVariantsProps = VariantProps<typeof paginationVariants> & 
 export const paginationVariants = tv({
 	slots: {
 		base: "p-2.5 -m-2.5",
-		wrapper: "overflow-visible relative h-fit max-w-fit flex flex-nowrap gap-1 items-center",
-		item: "select-none touch-none active:scale-[0.97] transition-transform",
+		wrapper: "relative max-w-fit h-fit flex flex-nowrap gap-1 items-center",
+		item: "select-none touch-none",
 		prev: "",
 		next: "",
-		cursor: "",
+		cursor: [
+			"z-20 flex items-center justify-center select-none touch-none origin-center pointer-events-none",
+			"transition-transform duration-300 motion-reduce:transition-none",
+		],
 		forwardIcon: "hidden group-hover:block group-focus-visible:block",
 		ellipsis: "group-hover:hidden group-focus-visible:hidden",
 	},
 	variants: {
 		variant: {
-			bordered: {
-				item: "border-2 border-default bg-transparent hover:bg-default-100",
-			},
-			light: {
-				item: "bg-transparent",
-			},
+			bordered: "",
+			light: "",
 			flat: "",
-			faded: {
-				item: "border-2 border-default",
-			},
+			faded: "",
 		},
 		color: {
 			default: {
@@ -86,26 +83,125 @@ export const paginationVariants = tv({
 		size: "md",
 		rounded: "md",
 	},
-	compoundVariants: [],
+	compoundVariants: [
+		{
+			showShadow: true,
+			color: "default",
+			className: {
+				cursor: "shadow-md shadow-default/50",
+			},
+		},
+		{
+			showShadow: true,
+			color: "primary",
+			className: {
+				cursor: "shadow-md shadow-primary/40",
+			},
+		},
+		{
+			showShadow: true,
+			color: "secondary",
+			className: {
+				cursor: "shadow-md shadow-secondary/40",
+			},
+		},
+		{
+			showShadow: true,
+			color: "success",
+			className: {
+				cursor: "shadow-md shadow-success/40",
+			},
+		},
+		{
+			showShadow: true,
+			color: "warning",
+			className: {
+				cursor: "shadow-md shadow-warning/40",
+			},
+		},
+		{
+			showShadow: true,
+			color: "danger",
+			className: {
+				cursor: "shadow-md shadow-danger/40",
+			},
+		},
+	],
 	compoundSlots: [
 		{
-			slots: ["item", "cursor", "prev", "next"],
-			class: [
-				"flex",
-				"flex-wrap",
-				"truncate",
-				"box-border",
-				"outline-none",
-				"items-center",
-				"justify-center",
-				"text-default-foreground",
-				"focus-visible:z-10",
-				"focus-visible:outline-2",
-				"focus-visible:outline-primary",
-				"focus-visible:outline-offset-2",
-				"data-[disabled=true]:text-default-300",
-				"data-[disabled=true]:pointer-events-none",
+			slots: ["item", "next"],
+			compact: true,
+			variant: ["bordered", "faded"],
+			className: "ms-[calc(theme(borderWidth.2)*-1)]",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "default",
+			className: "outline-none focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "default",
+			className: "focus-visible:outline-default",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "primary",
+			className: "focus-visible:outline-primary",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "secondary",
+			className: "focus-visible:outline-secondary",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "success",
+			className: "focus-visible:outline-success",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "warning",
+			className: "focus-visible:outline-warning",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			color: "danger",
+			className: "focus-visible:outline-danger",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			className: [
+				"box-border flex flex-wrap items-center justify-center",
+				"truncate outline-none text-default-foreground",
+				"active:scale-[0.97] transition-[transform,background-color]",
+				"aria-disabled:text-default-300 aria-disabled:pointer-events-none",
 			],
+		},
+		{
+			slots: ["item", "prev", "next"],
+			variant: ["flat", "bordered", "faded"],
+			className: "shadow-sm",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			variant: "bordered",
+			className: "border-2 border-default hover:bg-default-100",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			variant: "flat",
+			className: "bg-default-100 hover:bg-default-200",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			variant: "faded",
+			className: "border-2 border-default bg-default-50 hover:bg-default-100",
+		},
+		{
+			slots: ["item", "prev", "next"],
+			variant: "light",
+			className: "hover:bg-default-100",
 		},
 		{
 			slots: ["item", "cursor", "prev", "next"],

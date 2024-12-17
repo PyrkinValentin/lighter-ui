@@ -1,4 +1,5 @@
-import type { AriaRole, Key, ReactNode } from "react"
+import type { AriaRole, ReactNode } from "react"
+import type { ReferenceType } from "@floating-ui/react"
 import type { ComponentProps } from "@/shared/types/props"
 import type { PaginationVariantsProps } from "./variants"
 
@@ -9,11 +10,11 @@ export type PaginationProps = ComponentProps<
 >
 
 type PaginationOwnProps = {
-	dotsJump?: number
 	loop?: boolean
+	showControls?: boolean
+	dotsJump?: number
 	siblings?: number
 	boundaries?: number
-	showControls?: boolean
 	defaultPage?: number
 	page?: number
 	totalPages?: number
@@ -22,12 +23,13 @@ type PaginationOwnProps = {
 }
 
 export type PaginationItemProps = {
-	key: Key
-	role: AriaRole
-	tabIndex: number
-	"aria-label": string
+	ref?: (node: (ReferenceType | null)) => void
+	role?: AriaRole
+	"aria-label"?: string
+	"aria-disabled"?: boolean
+	tabIndex?: number
 	page: number
-	className: string
-	onClick: () => void
-	children: ReactNode
+	className?: string
+	onClick?: () => void
+	children?: ReactNode
 }
