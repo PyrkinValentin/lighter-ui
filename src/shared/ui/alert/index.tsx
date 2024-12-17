@@ -3,17 +3,17 @@ import type { AlertProps } from "./types"
 
 import { cloneElement, isValidElement } from "react"
 
-import { RiInformationFill, RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri"
+import { TbInfoCircleFilled, TbCircleCheckFilled, TbAlertHexagonFilled, TbAlertOctagonFilled } from "react-icons/tb"
 
 import { alertVariants } from "./variants"
 
 const icons = {
-	default: RiInformationFill,
-	primary: RiInformationFill,
-	secondary: RiInformationFill,
-	success: RiCheckboxCircleFill,
-	warning: RiErrorWarningFill,
-	danger: RiErrorWarningFill,
+	default: TbInfoCircleFilled,
+	primary: TbInfoCircleFilled,
+	secondary: TbInfoCircleFilled,
+	success: TbCircleCheckFilled,
+	warning: TbAlertHexagonFilled,
+	danger: TbAlertOctagonFilled,
 }
 
 const getDefaultIcon = (color: AlertProps["color"] = "default") => {

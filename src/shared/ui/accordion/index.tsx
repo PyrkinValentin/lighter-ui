@@ -8,7 +8,7 @@ import { useControlledState } from "@/shared/hooks/use-controlled-state"
 import { createContext } from "react"
 import { isFunction } from "@/shared/helpers/is-function"
 
-import { FiChevronLeft } from "react-icons/fi"
+import { TbChevronLeft } from "react-icons/tb"
 
 import { Collapse } from "./collapse"
 import { accordionItemVariants, accordionVariants } from "./variants"
@@ -163,7 +163,7 @@ export const AccordionItem = (props: AccordionItemProps) => {
 					<span aria-hidden="true" className={slots.indicator({ className: classNames?.indicator })}>
 						{indicator
 							? isFunction(indicator) ? indicator(isExpanded) : indicator
-							: <FiChevronLeft/>
+							: <TbChevronLeft/>
 						}
 					</span>
 				</button>
