@@ -60,9 +60,9 @@ export const InputOtp = (props: InputOtpProps) => {
 				minLength={length}
 				noScriptCSSFallback={null}
 				onChange={onValueChange}
-				render={(renderOTPProps) => (
+				render={(props) => (
 					<div className={slots.segmentWrapper({ className: classNames?.segmentWrapper })}>
-						{renderOTPProps.slots.map((slot, i) => (
+						{props.slots.map((slot, i) => (
 							<InputOtpSegment
 								key={i}
 								type={type}
