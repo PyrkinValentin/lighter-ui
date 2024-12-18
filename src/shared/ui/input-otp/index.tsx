@@ -113,16 +113,22 @@ const InputOtpSegment = (props: InputOtpSegmentProps) => {
 
 	const displayValue = () => {
 		if (isActive && !char) {
-			return <div className={caretClassName}/>
+			return (
+				<div className={caretClassName}/>
+			)
 		}
 
 		if (char) {
-			return type === "password"
-				? <div className={passwordCharClassName}/>
-				: <div>{char}</div>
+			return (
+				type === "password"
+					? <div className={passwordCharClassName}/>
+					: <div>{char}</div>
+			)
 		}
 
-		return <div>{placeholderChar}</div>
+		return (
+			<div>{placeholderChar}</div>
+		)
 	}
 
 	return (
