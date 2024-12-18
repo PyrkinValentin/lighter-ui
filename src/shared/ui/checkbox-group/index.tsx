@@ -1,6 +1,6 @@
 import type { CheckboxGroupContextValue, CheckboxGroupProps } from "./types"
 
-import { useId } from "react"
+import { use, useId } from "react"
 import { useControlledState } from "@/shared/hooks/use-controlled-state"
 
 import { createContext } from "react"
@@ -9,7 +9,8 @@ import { HelperText } from "@/shared/ui/helper-text"
 
 import { checkboxGroupVariants } from "./variants"
 
-export const CheckboxGroupContext = createContext<CheckboxGroupContextValue>({})
+const CheckboxGroupContext = createContext<CheckboxGroupContextValue>({})
+export const useCheckboxGroupContext = () => use(CheckboxGroupContext)
 
 export const CheckboxGroup = (props: CheckboxGroupProps) => {
 	const {

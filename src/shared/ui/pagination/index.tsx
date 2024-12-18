@@ -1,12 +1,8 @@
 import type { PaginationItemProps, PaginationProps } from "./types"
 
-import { useMemo } from "react"
-import { useFloating } from "@floating-ui/react"
+import { Fragment, useMemo } from "react"
 import { useControlledState } from "@/shared/hooks/use-controlled-state"
 
-import { autoUpdate, offset } from "@floating-ui/react"
-
-import { Fragment } from "react"
 import { TbChevronLeft, TbChevronRight, TbChevronsLeft, TbChevronsRight, TbDots } from "react-icons/tb"
 
 import { paginationVariants } from "./variants"
@@ -115,20 +111,6 @@ export const Pagination = (props: PaginationProps) => {
 		setValue: onPageChange,
 	})
 
-	const {
-		isPositioned,
-		refs,
-		floatingStyles,
-	} = useFloating({
-		open: true,
-		whileElementsMounted: autoUpdate,
-		middleware: [
-			offset(({ rects }) => (
-				-rects.reference.height / 2 - rects.floating.height / 2
-			)),
-		],
-	})
-
 	const paginationRange = useMemo(() => {
 		return getPaginationRange({
 			boundaries,
@@ -145,6 +127,10 @@ export const Pagination = (props: PaginationProps) => {
 		totalPages,
 	])
 
+	const isDisabled = (page: number) => {
+		return disabled || !loop && controlledPage === page || undefined
+	}
+
 	const slots = paginationVariants({
 		variant,
 		color,
@@ -157,24 +143,22 @@ export const Pagination = (props: PaginationProps) => {
 
 	const renderItem = (value: PaginationItemValue, index: number) => {
 		if (value === "prev") {
-			const isDisabled = disabled || !loop && controlledPage === 1
-				? true
-				: undefined
-
-			const prevPage = controlledPage <= 1
+			const nextPage = controlledPage <= 1
 				? loop
 					? totalPages
 					: 1
 				: controlledPage - 1
 
+			const disabled = isDisabled(1)
+
 			const { page, ...restProps }: PaginationItemProps = {
 				role: "button",
 				"aria-label": "prev page",
-				"aria-disabled": isDisabled,
-				tabIndex: isDisabled ? -1 : 0,
-				page: prevPage,
+				"aria-disabled": disabled,
+				tabIndex: disabled ? -1 : 0,
+				page: nextPage,
 				className: slots.prev({ className: classNames?.prev }),
-				onClick: () => setControlledPage?.(prevPage),
+				onClick: () => setControlledPage?.(nextPage),
 				children: <TbChevronLeft/>,
 			}
 
@@ -184,21 +168,19 @@ export const Pagination = (props: PaginationProps) => {
 		}
 
 		if (value === "next") {
-			const isDisabled = disabled || !loop && controlledPage === totalPages
-				? true
-				: undefined
-
 			const nextPage = controlledPage >= totalPages
 				? loop
 					? 1
 					: totalPages
 				: controlledPage + 1
 
+			const disabled = isDisabled(totalPages)
+
 			const { page, ...restProps }: PaginationItemProps = {
 				role: "button",
 				"aria-label": "next page",
-				"aria-disabled": isDisabled,
-				tabIndex: isDisabled ? -1 : 0,
+				"aria-disabled": disabled,
+				tabIndex: disabled ? -1 : 0,
 				page: nextPage,
 				className: slots.next({ className: classNames?.next }),
 				onClick: () => setControlledPage?.(nextPage),
@@ -213,7 +195,7 @@ export const Pagination = (props: PaginationProps) => {
 		if (value === "dots") {
 			const before = index < paginationRange.indexOf(controlledPage)
 
-			const jumpPage = before
+			const nextPage = before
 				? controlledPage - dotsJump >= 1
 					? controlledPage - dotsJump
 					: 1
@@ -225,9 +207,9 @@ export const Pagination = (props: PaginationProps) => {
 				role: "button",
 				"aria-label": "jump page",
 				tabIndex: disabled ? -1 : 0,
-				page: jumpPage,
+				page: nextPage,
 				className: slots.item({ className: [classNames?.item, "group"] }),
-				onClick: () => setControlledPage?.(jumpPage),
+				onClick: () => setControlledPage?.(nextPage),
 				children: (
 					<>
 						<TbDots className={slots?.ellipsis({ className: classNames?.ellipsis })}/>
@@ -246,13 +228,9 @@ export const Pagination = (props: PaginationProps) => {
 		}
 
 		const { page, ...restProps }: PaginationItemProps = {
-			ref: (instance) => {
-				if (controlledPage === value) {
-					refs.setReference(instance)
-				}
-			},
 			role: "button",
 			"aria-label": `page ${value}`,
+			"aria-selected": controlledPage === value || undefined,
 			tabIndex: disabled ? -1 : 0,
 			page: value,
 			className: slots.item({ className: classNames?.item }),
@@ -273,14 +251,6 @@ export const Pagination = (props: PaginationProps) => {
 			{...restProps}
 		>
 			<ul className={slots.wrapper({ className: classNames?.wrapper })}>
-				<span
-					ref={refs.setFloating}
-					className={isPositioned ? slots.cursor({ className: classNames?.cursor }) : undefined}
-					style={floatingStyles}
-				>
-					{isPositioned ? controlledPage : null}
-				</span>
-
 				{paginationRange.map(renderItem)}
 			</ul>
 		</nav>

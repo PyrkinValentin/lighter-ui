@@ -2,7 +2,7 @@
 
 import type { RadioGroupContextValue, RadioGroupProps } from "./types"
 
-import { useId } from "react"
+import { use, useId } from "react"
 import { useControlledState } from "@/shared/hooks/use-controlled-state"
 
 import { createContext } from "react"
@@ -11,7 +11,8 @@ import { HelperText } from "@/shared/ui/helper-text"
 
 import { radioGroupVariants } from "./variants"
 
-export const RadioGroupContext = createContext<RadioGroupContextValue>({})
+const RadioGroupContext = createContext<RadioGroupContextValue>({})
+export const useRadioGroupContext = () => use(RadioGroupContext)
 
 export const RadioGroup = (props: RadioGroupProps) => {
 	const {

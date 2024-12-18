@@ -4,7 +4,7 @@ import type { ChangeEvent, HTMLProps } from "react"
 import type { CheckboxIconProps, CheckboxProps } from "./types"
 
 import { useId } from "react"
-import { useCheckboxGroupContext } from "@/shared/ui/checkbox-group/hooks"
+import { useCheckboxGroupContext } from "@/shared/ui/checkbox-group"
 
 import { cloneElement, isValidElement } from "react"
 

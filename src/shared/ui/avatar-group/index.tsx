@@ -3,6 +3,8 @@
 import type { HTMLProps } from "react"
 import type { AvatarGroupContextValue, AvatarGroupProps } from "./types"
 
+import { use } from "react"
+
 import { createContext } from "react"
 import { getCollectionChildren } from "@/shared/utils/children"
 
@@ -10,7 +12,8 @@ import { Avatar } from "@/shared/ui/avatar"
 
 import { avatarGroupVariants } from "./variants"
 
-export const AvatarGroupContext = createContext<AvatarGroupContextValue>({})
+const AvatarGroupContext = createContext<AvatarGroupContextValue>({})
+export const useAvatarGroupContext = () => use(AvatarGroupContext)
 
 export const AvatarGroup = (props: AvatarGroupProps) => {
 	const {

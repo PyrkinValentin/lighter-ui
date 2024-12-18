@@ -4,7 +4,7 @@ import type { SyntheticEvent } from "react"
 import type { AvatarProps } from "./types"
 
 import { useState } from "react"
-import { useAvatarGroupContext } from "@/shared/ui/avatar-group/hooks"
+import { useAvatarGroupContext } from "@/shared/ui/avatar-group"
 
 import { getInitials } from "@/shared/utils/word"
 

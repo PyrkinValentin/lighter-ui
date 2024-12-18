@@ -3,7 +3,7 @@
 import type { ElementType } from "react"
 import type { ButtonProps } from "./types"
 
-import { useButtonGroupContext } from "@/shared/ui/button-group/hooks"
+import { useButtonGroupContext } from "@/shared/ui/button-group"
 
 import { Spinner } from "@/shared/ui/spinner"
 
