@@ -1,31 +1,20 @@
-"use client"
+import type { ElementType, MouseEvent } from "react"
+import type { TabListProps, TabPanelProps, TabProps, TabsContextValue, TabsProps } from "./types"
 
-import type { ElementType, ReactElement } from "react"
-import type { TabProps, TabsProps } from "./types"
-
+import { use } from "react"
 import { useControlledState } from "@/shared/hooks/use-controlled-state"
-import { useAnimate } from "@/shared/hooks/use-animate"
 
-import { getCollectionChildren } from "@/shared/utils/children"
+import { createContext } from "react"
+import { cn } from "@/core/theme"
 
 import { tabsVariants } from "./variants"
 
-const getDefaultTab = (collection: ReactElement<TabProps>[], disabledValue?: string[]) => {
-	if (!disabledValue) {
-		return collection.at(0)?.props
-	}
-
-	const defaultTabElement = collection.find(({ props }) => props.value
-		? !disabledValue?.includes(props.value)
-		: false
-	)
-
-	return defaultTabElement?.props
-}
+const TabsContext = createContext<TabsContextValue>({})
+const useTabsContext = () => use(TabsContext)
 
 export const Tabs = (props: TabsProps) => {
 	const {
-		disabled: disabledProp,
+		keepMounted,
 		disabledValue,
 		defaultValue,
 		value,
@@ -35,8 +24,9 @@ export const Tabs = (props: TabsProps) => {
 		color,
 		size,
 		rounded,
-		placement = "top",
 		fullWidth,
+		disabled: disabledProp,
+		placement,
 		className,
 		classNames,
 
@@ -44,121 +34,95 @@ export const Tabs = (props: TabsProps) => {
 		...restProps
 	} = props
 
-	const collectionChildren = getCollectionChildren<TabProps>(children, (child, index) => ({
-		...child,
-		props: {
-			...child.props,
-			value: child.props.value ?? String(index),
-		},
-	}))
-
-	const defaultTab = getDefaultTab(collectionChildren, disabledValue)
-
 	const [controlledValue, setControlledValue] = useControlledState({
-		defaultValue: defaultValue ?? defaultTab?.value,
+		defaultValue,
 		value,
 		setValue: onValueChange,
 	})
 
-	const disabled = (value?: string) => {
-		return disabledProp ||
-			(value
-					? disabledValue?.includes(value)
-					: undefined
-			)
+	const disabled = (value: string) => {
+		return disabledProp || disabledValue?.includes(value) || undefined
 	}
 
-	const selected = (value?: string) => value === controlledValue
-
-	const onSelected = (value?: string) => {
-		if (value) {
-			setControlledValue?.(value)
-		}
-	}
-
-	const orientation = ["start", "end"].includes(placement)
-		? "vertical"
-		: "horizontal"
+	const selected = (value: string) => value === controlledValue || undefined
 
 	const slots = tabsVariants({
 		variant,
 		color,
 		size,
 		rounded,
-		placement,
 		fullWidth,
 		disabled: disabledProp,
+		placement,
 	})
 
-	const tabClassNames = slots.tab({
-		className: classNames?.tab,
-	})
-
-	const cursorClassNames = slots.cursor({
-		className: classNames?.cursor,
-	})
-
-	const tabContentClassNames = slots.tabContent({
-		className: classNames?.tabContent,
-	})
+	const contextValue: TabsContextValue = {
+		keepMounted,
+		disabled,
+		selected,
+		onSelectedChange: setControlledValue,
+		tabListClassName: slots.tabList({ className: classNames?.tabList }),
+		tabClassName: slots.tab({ className: classNames?.tab }),
+		tabPanelClassName: slots.tabPanel({ className: classNames?.tabPanel }),
+	}
 
 	return (
-		<div className={slots.base({ className: [className, classNames?.base] })} {...restProps}>
+		<TabsContext value={contextValue}>
 			<div
-				role="tablist"
-				aria-orientation={orientation}
-				className={slots.tabList({ className: classNames?.tabList })}
+				className={slots.base({ className: [className, classNames?.base] })}
+				{...restProps}
 			>
-				{collectionChildren.map(({ key, props: { value, onClick, ...restProps } }) => (
-					<Tab
-						key={key}
-						value={value}
-						disabled={disabled(value)}
-						selected={selected(value)}
-						className={tabClassNames}
-						classNames={{
-							cursor: cursorClassNames,
-							tabContent: tabContentClassNames,
-						}}
-						onClick={(ev) => {
-							onSelected(value)
-							onClick?.(ev)
-						}}
-						{...restProps}
-					/>
-				))}
+				{children}
 			</div>
+		</TabsContext>
+	)
+}
 
-			{collectionChildren.map(({ props: { value, children } }) => selected(value) ? (
-				<div
-					key={value}
-					role="tabpanel"
-					id={`tabpanel-${value}`}
-					aria-labelledby={`tab-${value}`}
-					className={slots.tabPanel({ className: classNames?.tabPanel })}
-				>
-					{children}
-				</div>
-			) : null)}
+export const TabList = (props: TabListProps) => {
+	const { tabListClassName } = useTabsContext()
+
+	const {
+		className,
+		children,
+		...restProps
+	} = props
+
+	return (
+		<div
+			role="tablist"
+			aria-orientation="horizontal"
+			className={cn(tabListClassName, className)}
+			{...restProps}
+		>
+			{children}
 		</div>
 	)
 }
 
 export const Tab = <As extends ElementType = "button">(props: TabProps<As>) => {
 	const {
-		as = "button",
-		title,
-		value,
+		disabled: disabledCtx,
 		selected,
-		disabled,
-		classNames,
+		onSelectedChange,
+		tabClassName,
+	} = useTabsContext()
+
+	const {
+		as = "button",
+		value,
+		disabled = disabledCtx?.(value),
+		onClick,
+		className,
+		children,
 		...restProps
 	} = props as TabProps
 
-	const [mounted, animateClassName] = useAnimate(selected, {
-		initial: "opacity-0 scale-90",
-		enter: "opacity-100 scale-100",
-	})
+	const isSelected = selected?.(value)
+
+	const handleClick = (ev: MouseEvent<HTMLButtonElement>) => {
+		onSelectedChange?.(value)
+		onClick?.(ev)
+	}
 
 	const Tag = as
 
@@ -167,19 +131,47 @@ export const Tab = <As extends ElementType = "button">(props: TabProps<As>) => {
 			role="tab"
 			id={`tab-${value}`}
 			aria-controls={`tabpanel-${value}`}
-			aria-disabled={disabled}
-			aria-selected={selected}
+			aria-selected={isSelected}
 			disabled={disabled}
+			className={cn(tabClassName, className)}
+			onClick={handleClick}
 			{...restProps}
 		>
-			{mounted
-				? <div className={animateClassName(classNames?.cursor)}/>
-				: null
-			}
-
-			<div className={classNames?.tabContent}>
-				{title}
-			</div>
+			{children}
 		</Tag>
+	)
+}
+
+export const TabPanel = (props: TabPanelProps) => {
+	const {
+		keepMounted,
+		selected,
+		tabPanelClassName,
+	} = useTabsContext()
+
+	const {
+		value,
+		className,
+		children,
+		...restProps
+	} = props
+
+	const isSelected = selected?.(value)
+
+	if (!isSelected && !keepMounted) {
+		return <></>
+	}
+
+	return (
+		<div
+			role="tabpanel"
+			id={`tabpanel-${value}`}
+			aria-labelledby={`tab-${value}`}
+			aria-selected={isSelected}
+			className={cn(tabPanelClassName, className)}
+			{...restProps}
+		>
+			{children}
+		</div>
 	)
 }

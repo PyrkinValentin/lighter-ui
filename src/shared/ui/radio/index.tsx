@@ -4,7 +4,7 @@ import type { ChangeEvent } from "react"
 import type { RadioProps } from "./types"
 
 import { useId } from "react"
-import { useRadioGroupContext } from "@/shared/ui/radio-group/hooks"
+import { useRadioGroupContext } from "@/shared/ui/radio-group"
 
 import { VisuallyHidden } from "@/shared/ui/visually-hidden"
 

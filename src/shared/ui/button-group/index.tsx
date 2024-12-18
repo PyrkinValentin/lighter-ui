@@ -1,10 +1,13 @@
 import type { ButtonGroupContextValue, ButtonGroupProps } from "./types"
 
+import { use } from "react"
+
 import { createContext } from "react"
 
 import { buttonGroupVariants } from "./variants"
 
-export const ButtonGroupContext = createContext<ButtonGroupContextValue>({})
+const ButtonGroupContext = createContext<ButtonGroupContextValue>({})
+export const useButtonGroupContext = () => use(ButtonGroupContext)
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
 	const {
