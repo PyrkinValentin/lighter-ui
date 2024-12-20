@@ -125,7 +125,7 @@ export const DialogTrigger = (props: DialogTriggerProps) => {
 		? children
 		: null
 
-	const triggerOwnProps = {
+	const triggerOwnProps: HTMLProps<HTMLElement> = {
 		ref: triggerRef,
 		...getReferenceProps?.(),
 	}
@@ -152,7 +152,7 @@ export const DialogClose = (props: DialogCloseProps) => {
 		? children
 		: null
 
-	const closeOwnProps = {
+	const closeOwnProps: HTMLProps<HTMLElement> = {
 		onClick: handleClick,
 	}
 

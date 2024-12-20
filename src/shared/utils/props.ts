@@ -51,24 +51,24 @@ export const mergeProps = <
 			isRef<HTMLElement>(a) &&
 			isRef<HTMLElement>(b)
 		) {
-			mergedProps[key] = mergeRefs(a, b)
+			mergedProps[key] = mergeRefs(b, a)
+		} else if (
+			isFunction(a) &&
+			isFunction(b)
+		) {
+			mergedProps[key] = chain(b, a)
 		} else if (
 			key === "className" &&
 			isString(a) &&
 			isString(b)
 		) {
-			mergedProps[key] = cn(a, b)
-		} else if (
-			isFunction(a) &&
-			isFunction(b)
-		) {
-			mergedProps[key] = chain(a, b)
+			mergedProps[key] = cn(b, a)
 		} else if (
 			key === "style" &&
 			isObject(a) &&
 			isObject(b)
 		) {
-			mergedProps[key] = { ...a, ...b }
+			mergedProps[key] = { ...b, ...a }
 		} else {
 			mergedProps[key] = isUndefined(b)
 				? a

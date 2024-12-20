@@ -26,7 +26,7 @@ export const Link = (props: LinkProps) => {
 		target: "_blank",
 	} : undefined
 
-	const linkClassNames = linkVariants({
+	const classNames = linkVariants({
 		variant,
 		size,
 		color,
@@ -37,7 +37,7 @@ export const Link = (props: LinkProps) => {
 
 	return (
 		<NextLink
-			className={linkClassNames}
+			className={classNames}
 			tabIndex={
 				disabled
 					? -1

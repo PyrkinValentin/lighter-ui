@@ -149,7 +149,7 @@ export const PopoverTrigger = (props: PopoverTriggerProps) => {
 		? children
 		: null
 
-	const triggerOwnProps = {
+	const triggerOwnProps: HTMLProps<HTMLElement> = {
 		ref: triggerRef,
 		className: triggerClassName,
 		...getReferenceProps?.(),
@@ -177,7 +177,7 @@ export const PopoverClose = (props: PopoverCloseProps) => {
 		? children
 		: null
 
-	const closeOwnProps = {
+	const closeOwnProps: HTMLProps<HTMLElement> = {
 		onClick: handleClick,
 	}
 

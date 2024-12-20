@@ -1,3 +1,5 @@
+"use client"
+
 import type { ElementType, MouseEvent } from "react"
 import type { TabListProps, TabPanelProps, TabProps, TabsContextValue, TabsProps } from "./types"
 
@@ -131,7 +133,7 @@ export const Tab = <As extends ElementType = "button">(props: TabProps<As>) => {
 			role="tab"
 			id={`tab-${value}`}
 			aria-controls={`tabpanel-${value}`}
-			aria-selected={isSelected}
+			data-selected={isSelected}
 			disabled={disabled}
 			className={cn(tabClassName, className)}
 			onClick={handleClick}
@@ -167,7 +169,7 @@ export const TabPanel = (props: TabPanelProps) => {
 			role="tabpanel"
 			id={`tabpanel-${value}`}
 			aria-labelledby={`tab-${value}`}
-			aria-selected={isSelected}
+			data-selected={isSelected}
 			className={cn(tabPanelClassName, className)}
 			{...restProps}
 		>

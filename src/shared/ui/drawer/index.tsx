@@ -144,7 +144,7 @@ export const DrawerTrigger = (props: DrawerTriggerProps) => {
 		? children
 		: null
 
-	const triggerOwnProps = {
+	const triggerOwnProps: HTMLProps<HTMLElement> = {
 		ref: triggerRef,
 		...getReferenceProps?.(),
 	}
@@ -171,7 +171,7 @@ export const DrawerClose = (props: DrawerCloseProps) => {
 		? children
 		: null
 
-	const closeOwnProps = {
+	const closeOwnProps: HTMLProps<HTMLElement> = {
 		onClick: handleClick,
 	}
 
