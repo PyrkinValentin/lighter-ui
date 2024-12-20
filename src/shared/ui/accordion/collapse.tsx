@@ -97,7 +97,7 @@ export const Collapse = (props: CollapseProps) => {
 		? children
 		: null
 
-	const elementProps = {
+	const elementOwnProps: HTMLProps<HTMLElement> = {
 		ref: wrapperRef,
 	}
 
@@ -108,8 +108,8 @@ export const Collapse = (props: CollapseProps) => {
 	return (
 		<div style={styles}>
 			{validElement
-				? cloneElement(validElement, mergeProps(validElement.props, elementProps))
-				: <span {...elementProps}>{children}</span>
+				? cloneElement(validElement, mergeProps(validElement.props, elementOwnProps))
+				: <span {...elementOwnProps}>{children}</span>
 			}
 		</div>
 	)

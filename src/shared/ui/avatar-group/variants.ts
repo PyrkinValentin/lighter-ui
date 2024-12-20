@@ -2,7 +2,9 @@ import type { VariantProps, VariantSlots } from "@/core/theme"
 
 import { tv } from "@/core/theme"
 
-export type AvatarGroupVariantsProps = VariantProps<typeof avatarGroupVariants> & VariantSlots<typeof avatarGroupVariants>
+export type AvatarGroupVariantsProps =
+	VariantProps<typeof avatarGroupVariants>
+	& VariantSlots<typeof avatarGroupVariants>
 
 export const avatarGroupVariants = tv({
 	slots: {
@@ -16,7 +18,7 @@ export const avatarGroupVariants = tv({
 			},
 			false: {
 				base: "ms-2",
-				count: "z-10 transition-none hover:-translate-x-0 focus-visible:-translate-x-0",
+				count: "z-10",
 			},
 		},
 	},

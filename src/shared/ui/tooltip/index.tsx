@@ -100,7 +100,7 @@ export const Tooltip = (props: TooltipProps) => {
 		? children
 		: null
 
-	const triggerOwnProps = {
+	const triggerOwnProps: HTMLProps<HTMLElement> = {
 		ref: refs.setReference,
 		className: slots.trigger({ className: classNames?.trigger }),
 		...getReferenceProps(),

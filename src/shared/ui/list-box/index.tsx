@@ -15,7 +15,7 @@ import { listBoxVariants, listBoxItemVariants, listBoxSectionVariants } from "./
 
 const ListBoxContext = createContext<ListBoxContextValue>({})
 
-const useListBoxContext= () => use(ListBoxContext)
+const useListBoxContext = () => use(ListBoxContext)
 
 export const ListBox = (props: ListBoxProps) => {
 	const {
@@ -173,13 +173,7 @@ export const ListBoxItem = <As extends ElementType = "li">(props: ListBoxItemPro
 		onClick?.(ev)
 	}
 
-	const {
-		base,
-		wrapper,
-		title,
-		description: descriptionSlot,
-		selectedIcon,
-	} = listBoxItemVariants({
+	const slots = listBoxItemVariants({
 		variant,
 		color,
 		divider,
@@ -187,28 +181,8 @@ export const ListBoxItem = <As extends ElementType = "li">(props: ListBoxItemPro
 		readOnly,
 	})
 
-	const baseClassNames = base({
-		className: [className, classNames?.base]
-	})
-
-	const wrapperClassNames = wrapper({
-		className: classNames?.wrapper,
-	})
-
-	const titleClassNames = title({
-		className: classNames?.title,
-	})
-
-	const descriptionClassNames = descriptionSlot({
-		className: classNames?.description,
-	})
-
-	const selectedIconClassNames = selectedIcon({
-		className: classNames?.selectedIcon,
-	})
-
 	const titleWrapper = (children: ReactNode) => description
-		? <div className={wrapperClassNames}>{children}</div>
+		? <div className={slots.wrapper({ className: classNames?.wrapper })}>{children}</div>
 		: <>{children}</>
 
 	const Tag = as
@@ -220,7 +194,7 @@ export const ListBoxItem = <As extends ElementType = "li">(props: ListBoxItemPro
 			aria-selected={isSelected}
 			aria-disabled={disabled}
 			tabIndex={(disabled || readOnly) ? -1 : 0}
-			className={baseClassNames}
+			className={slots.base({ className: [className, classNames?.base] })}
 			onClick={handleClick}
 			{...restProps}
 		>
@@ -228,12 +202,12 @@ export const ListBoxItem = <As extends ElementType = "li">(props: ListBoxItemPro
 
 			{titleWrapper(
 				<>
-					<span id={labelId} className={titleClassNames}>
+					<span id={labelId} className={slots.title({ className: classNames?.title })}>
 						{children}
 					</span>
 
 					{description ? (
-						<span className={descriptionClassNames}>
+						<span className={slots.description({ className: classNames?.description })}>
 							{description}
 						</span>
 					) : null}
@@ -246,7 +220,7 @@ export const ListBoxItem = <As extends ElementType = "li">(props: ListBoxItemPro
 						aria-hidden="true"
 						role="presentation"
 						viewBox="0 0 17 18"
-						className={selectedIconClassNames}
+						className={slots.selectedIcon({ className: classNames?.selectedIcon })}
 					>
 						<polyline
 							fill="none"

@@ -12,11 +12,11 @@ export const tabsVariants = tv({
 			"relative px-3 py-1 w-full flex justify-center items-center",
 			"outline-none cursor-pointer transition duration-300",
 			"whitespace-nowrap text-default-500",
-			"hover:opacity-70 aria-selected:opacity-100 aria-selected:text-foreground",
+			"hover:opacity-70 data-[selected=true]:opacity-100 data-[selected=true]:text-foreground",
 			"disabled:cursor-not-allowed disabled:!opacity-30",
 			"focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2",
 		],
-		tabPanel: "outline-none hidden aria-selected:block",
+		tabPanel: "outline-none hidden data-[selected=true]:block",
 	},
 	variants: {
 		variant: {
@@ -127,8 +127,8 @@ export const tabsVariants = tv({
 			color: "default",
 			className: {
 				tab: [
-					"aria-selected:bg-background aria-selected:dark:bg-default aria-selected:shadow-small",
-					"aria-selected:text-default-foreground",
+					"data-[selected=true]:bg-background data-[selected=true]:dark:bg-default data-[selected=true]:shadow-small",
+					"data-[selected=true]:text-default-foreground",
 				],
 			},
 		},
@@ -136,77 +136,77 @@ export const tabsVariants = tv({
 			variant: ["solid", "bordered", "light"],
 			color: "primary",
 			className: {
-				tab: "aria-selected:bg-primary aria-selected:text-primary-foreground",
+				tab: "data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground",
 			},
 		},
 		{
 			variant: ["solid", "bordered", "light"],
 			color: "secondary",
 			className: {
-				tab: "aria-selected:bg-secondary aria-selected:text-secondary-foreground",
+				tab: "data-[selected=true]:bg-secondary data-[selected=true]:text-secondary-foreground",
 			},
 		},
 		{
 			variant: ["solid", "bordered", "light"],
 			color: "success",
 			className: {
-				tab: "aria-selected:bg-success aria-selected:text-success-foreground",
+				tab: "data-[selected=true]:bg-success data-[selected=true]:text-success-foreground",
 			},
 		},
 		{
 			variant: ["solid", "bordered", "light"],
 			color: "warning",
 			className: {
-				tab: "aria-selected:bg-warning aria-selected:text-warning-foreground",
+				tab: "data-[selected=true]:bg-warning data-[selected=true]:text-warning-foreground",
 			},
 		},
 		{
 			variant: ["solid", "bordered", "light"],
 			color: "danger",
 			className: {
-				tab: "aria-selected:bg-danger aria-selected:text-danger-foreground",
+				tab: "data-[selected=true]:bg-danger data-[selected=true]:text-danger-foreground",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "default",
 			className: {
-				tab: "aria-selected:border-b-foreground aria-selected:text-foreground",
+				tab: "data-[selected=true]:border-b-foreground data-[selected=true]:text-foreground",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "primary",
 			className: {
-				tab: "aria-selected:border-b-primary aria-selected:text-primary",
+				tab: "data-[selected=true]:border-b-primary data-[selected=true]:text-primary",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "secondary",
 			className: {
-				tab: "aria-selected:border-b-secondary aria-selected:text-secondary",
+				tab: "data-[selected=true]:border-b-secondary data-[selected=true]:text-secondary",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "success",
 			className: {
-				tab: "aria-selected:border-b-success aria-selected:text-success",
+				tab: "data-[selected=true]:border-b-success data-[selected=true]:text-success",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "warning",
 			className: {
-				tab: "aria-selected:border-b-warning aria-selected:text-warning",
+				tab: "data-[selected=true]:border-b-warning data-[selected=true]:text-warning",
 			},
 		},
 		{
 			variant: "underlined",
 			color: "danger",
 			className: {
-				tab: "aria-selected:border-b-danger aria-selected:text-danger",
+				tab: "data-[selected=true]:border-b-danger data-[selected=true]:text-danger",
 			},
 		},
 	],
