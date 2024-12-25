@@ -1,20 +1,19 @@
 import { useCallback, useEffect, useRef } from "react"
+import { useCallbackEvent } from "@/shared/hooks/use-callback-event"
 
 export const useDebounceCallback = <
 	Callback extends (...args: never[]) => unknown
 >(callback?: Callback, delay?: number) => {
-	const callbackRef = useRef(callback)
 	const timeoutIdRef = useRef<NodeJS.Timeout>(undefined)
+	const callbackEvent = useCallbackEvent(callback)
 
 	useEffect(() => () => clearTimeout(timeoutIdRef.current), [callback])
 
 	return useCallback((...value: Parameters<Callback>) => {
 		clearTimeout(timeoutIdRef.current)
 
-		const callback = callbackRef.current
-
-		if (callback) {
-			timeoutIdRef.current = setTimeout(() => callback(...value), delay)
+		if (callbackEvent) {
+			timeoutIdRef.current = setTimeout(() => callbackEvent(...value), delay)
 		}
-	}, [delay, callbackRef])
+	}, [callbackEvent, delay])
 }

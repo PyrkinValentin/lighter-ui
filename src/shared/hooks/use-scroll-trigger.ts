@@ -48,13 +48,13 @@ export const useScrollTrigger = (options?: UseScrollTriggerOptions) => {
 
 	const [trigger, setTrigger] = useState(false)
 
-	const debouncedTrigger = useDebounceCallback(setTrigger, delay)
+	const debounce = useDebounceCallback(setTrigger, delay)
 
 	useEffect(() => {
-		if (!enabled) return		
-		
+		if (!enabled) return
+
 		const scrollListener = () => {
-			debouncedTrigger(
+			debounce(
 				getTrigger(store, {
 					target,
 					disableHysteresis,
@@ -76,7 +76,7 @@ export const useScrollTrigger = (options?: UseScrollTriggerOptions) => {
 		target,
 		disableHysteresis,
 		threshold,
-		debouncedTrigger,
+		debounce,
 		enabled,
 	])
 

@@ -12,7 +12,7 @@ export const breadcrumbsVariants = tv({
 		item: "flex items-center",
 		itemContent: [
 			"outline-none focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2",
-			"hover:opacity-80 active:opacity-70 transition-opacity",
+			"hover:opacity-80 active:opacity-70 transition-opacity motion-reduce:transition-none",
 		],
 		lastItemContent: "",
 		separator: "px-1",
