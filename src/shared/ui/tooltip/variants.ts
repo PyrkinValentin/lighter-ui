@@ -27,7 +27,7 @@ export const tooltipVariants = tv({
 				base: "bg-foreground text-background",
 			},
 			primary: {
-				base:  "bg-primary text-primary-foreground",
+				base: "bg-primary text-primary-foreground",
 			},
 			secondary: {
 				base: "bg-secondary text-secondary-foreground",

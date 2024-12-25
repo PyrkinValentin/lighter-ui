@@ -57,10 +57,11 @@ export const Switch = (props: SwitchProps) => {
 			<span className={slots.wrapper({ className: classNames?.wrapper })}>
 				<VisuallyHidden>
 					<input
-						aria-labelledby={labelId}
 						role="switch"
+						aria-labelledby={labelId}
 						type="checkbox"
-						disabled={disabled || readOnly}
+						disabled={disabled}
+						readOnly={readOnly}
 						checked={controlledChecked}
 						className={slots.input({ className: classNames?.input })}
 						onChange={handleChange}

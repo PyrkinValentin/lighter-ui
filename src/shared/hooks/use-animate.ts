@@ -1,4 +1,4 @@
-import type { ClassValue } from "tailwind-variants"
+import type { ClassValue, CnReturn } from "tailwind-variants"
 
 import { useEffect, useMemo, useState } from "react"
 import { useFirstRender } from "@/shared/hooks/use-first-render"
@@ -23,12 +23,11 @@ type UseAnimationOptions = {
 	duration?: Duration
 }
 
+type GetClassName = (mergeClassValue?: ClassValue) => CnReturn
+
 const parseDuration = (duration: string) => Number(duration.split("-").at(1))
 
-export const useAnimate = (
-	on: boolean = false,
-	options?: UseAnimationOptions
-) => {
+export const useAnimate = (on: boolean = false, options?: UseAnimationOptions) => {
 	const {
 		base,
 		initial,
@@ -67,7 +66,7 @@ export const useAnimate = (
 		return () => cancelAnimationFrame(frame)
 	}, [on, mounted, animate, firstRender])
 
-	const getClassName = (mergeClassValue?: ClassValue) => {
+	const getClassName: GetClassName = (mergeClassValue) => {
 		return mergeClassValue
 			? cn(className, mergeClassValue)
 			: className

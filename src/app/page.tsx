@@ -1,16 +1,28 @@
+"use client"
+
+import { useState } from "react"
+
 import { Container } from "@/shared/ui/layout"
-import { Breadcrumbs } from "@/shared/ui/breadcrumbs"
-import { Link } from "@/shared/ui/link"
-import { IoMdHome } from "react-icons/io"
+import { Slider } from "@/shared/ui/slider"
+import { Chip } from "@/shared/ui/chip"
 
 const Home = () => {
+	const [value, setValue] = useState<[number, number]>([1.5, 4])
+
 	return (
-		<Container size="sm" className="pt-12">
-			<Breadcrumbs>
-				<Link href="/"><IoMdHome/> Home</Link>
-				<Link href="/">Search</Link>
-				Route
-			</Breadcrumbs>
+		<Container size="xs" className="pt-12">
+			<Slider
+				color="warning"
+				formatOptions={{ signDisplay: "always" }}
+				label="Exposure"
+				renderValue={({ value }) => <Chip size="sm" variant="faded">My donuts {value} of 60</Chip>}
+				minValue={-20}
+				maxValue={60}
+				showTooltip
+				value={value}
+				onValueChange={setValue}
+				step={1}
+			/>
 		</Container>
 	)
 }

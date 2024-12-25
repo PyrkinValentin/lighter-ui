@@ -36,8 +36,7 @@ export const CircularProgress = (props: CircularProgressProps) => {
 	const labelId = useId()
 
 	const textValue = showValueLabel
-		? numberFormat("BY", formatOptions)
-			.format(formatOptions?.style === "percent" ? value / 100 : value)
+		? numberFormat("BY", formatOptions).format(value)
 		: undefined
 
 	const center = 16
@@ -59,11 +58,11 @@ export const CircularProgress = (props: CircularProgressProps) => {
 	return (
 		<div
 			role="progressbar"
+			aria-labelledby={labelId}
 			aria-valuenow={value}
 			aria-valuemin={minValue}
 			aria-valuemax={maxValue}
 			aria-valuetext={textValue}
-			aria-labelledby={labelId}
 			className={slots.base({ className: [className, classNames?.base] })}
 			{...restProps}
 		>
@@ -95,14 +94,19 @@ export const CircularProgress = (props: CircularProgressProps) => {
 					/>
 				</svg>
 
-				{showValueLabel
-					? <span className={slots.value({ className: classNames?.value })}>{valueLabel ?? textValue}</span>
-					: null
-				}
+				{showValueLabel ? (
+					<output
+						aria-live="off"
+						htmlFor={labelId}
+						className={slots.value({ className: classNames?.value })}
+					>
+						{valueLabel ?? textValue}
+					</output>
+				) : null}
 			</div>
 
 			{label
-				? <span id={labelId} className={slots.label({ className: classNames?.label })}>{label}</span>
+				? <label id={labelId} className={slots.label({ className: classNames?.label })}>{label}</label>
 				: null
 			}
 		</div>

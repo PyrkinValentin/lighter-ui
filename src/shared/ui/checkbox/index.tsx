@@ -62,10 +62,10 @@ export const Checkbox = (props: CheckboxProps) => {
 			<span aria-hidden="true" className={slots.wrapper({ className: classNames?.wrapper })}>
 				<VisuallyHidden>
 					<input
-						type="checkbox"
 						aria-labelledby={labelId}
-						aria-checked={checked}
-						disabled={disabled || readOnly}
+						type="checkbox"
+						disabled={disabled}
+						readOnly={readOnly}
 						value={value}
 						checked={checked}
 						className={slots.input({ className: classNames?.input })}

@@ -9,7 +9,7 @@ import { clampPercentage } from "./utils"
 
 export const LinearProgress = (props: LinearProgressProps) => {
 	const {
-		showValueLabel,
+		showValueLabel = true,
 		value = 0,
 		minValue = 0,
 		maxValue = 100,
@@ -31,13 +31,12 @@ export const LinearProgress = (props: LinearProgressProps) => {
 	const labelId = useId()
 
 	const textValue = (!indeterminate && showValueLabel)
-		? numberFormat("BY", formatOptions)
-			.format(formatOptions?.style === "percent" ? value / 100 : value)
+		? numberFormat("BY", formatOptions).format(value)
 		: undefined
 
-	const percentage = indeterminate
-		? 0
-		: clampPercentage(((value - minValue) / (maxValue - minValue)) * 100, maxValue)
+	const percentage = !indeterminate
+		? clampPercentage(((value - minValue) / (maxValue - minValue)) * 100, maxValue)
+		: 0
 
 	const slots = linearProgressVariants({
 		color,
@@ -62,14 +61,19 @@ export const LinearProgress = (props: LinearProgressProps) => {
 			{(label || showValueLabel) ? (
 				<div className={slots.labelWrapper({ className: classNames?.labelWrapper })}>
 					{label
-						? <span id={labelId} className={slots.label({ className: classNames?.label })}>{label}</span>
+						? <label id={labelId} className={slots.label({ className: classNames?.label })}>{label}</label>
 						: null
 					}
 
-					{showValueLabel
-						? <span className={slots.label({ className: classNames?.label })}>{textValue}</span>
-						: null
-					}
+					{showValueLabel ? (
+						<output
+							aria-live="off"
+							htmlFor={labelId}
+							className={slots.value({ className: classNames?.value })}
+						>
+							{textValue}
+						</output>
+					) : null}
 				</div>
 			) : null}
 
