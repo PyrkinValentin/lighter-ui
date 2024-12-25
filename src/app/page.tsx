@@ -12,10 +12,10 @@ const Home = () => {
 	return (
 		<Container size="xs" className="pt-12">
 			<Slider
-				color="warning"
+				color="secondary"
 				formatOptions={{ signDisplay: "always" }}
 				label="Exposure"
-				renderValue={({ value }) => <Chip size="sm" variant="faded">My donuts {value} of 60</Chip>}
+				renderValue={({ value }) => <Chip size="sm" variant="faded">My donuts {value.join(" of ")}</Chip>}
 				minValue={-20}
 				maxValue={60}
 				showTooltip
