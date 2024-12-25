@@ -11,4 +11,7 @@ export const getInitials = (text: string) => {
 }
 
 export const getFirstLetter = (text: string) => text.charAt(0)
-export const firstLetterUppercase = (text: string) => getFirstLetter(text).toUpperCase() + text.slice(1)
+
+export const firstLetterUppercase = (text: string) => {
+	return getFirstLetter(text).toUpperCase() + text.slice(1)
+}
