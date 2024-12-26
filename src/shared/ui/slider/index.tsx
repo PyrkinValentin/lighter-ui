@@ -1,45 +1,45 @@
 "use client"
 
 import type { ChangeEvent, MouseEvent as ReactMouseEvent, TouchEvent as ReactTouchEvent } from "react"
-import type { SliderProps, SliderValue } from "./types"
+import type { SliderProps } from "./types"
 
 import { useCallback, useEffect, useRef, useState, useId } from "react"
 import { useCallbackEvent } from "@/shared/hooks/use-callback-event"
 import { useControlledState } from "@/shared/hooks/use-controlled-state"
 
-import { numberFormat } from "@/shared/utils/number"
-import { isArray } from "@/shared/helpers/is-array"
+import { numberArrayFormat, numberClump, numberFindClosest, numberFormat } from "@/shared/utils/number"
 import { isUndefined } from "@/shared/helpers/is-undefined"
 
+import { Fragment } from "react"
 import { VisuallyHidden } from "@/shared/ui/visually-hidden"
 import { Tooltip } from "@/shared/ui/tooltip"
 
 import { sliderVariants } from "./variants"
 
-type RangeTrigger = "thumb-start" | "thumb-end" | "track"
-
-export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
+export const Slider = (props: SliderProps) => {
 	const {
 		label,
-		showValueLabel = true,
+		showTooltip,
+		showValueLabel,
+		showSteps,
+		marks,
 		startContent,
 		endContent,
 		formatOptions,
 		fillOffset,
-		step = 0,
+		step = 1,
 		minValue = 0,
 		maxValue = 100,
-		defaultValue = 0,
+		defaultValue = [0],
 		value,
 		onValueChange,
+		onValueChangeComplete,
 		renderValue,
-
-		showTooltip,
 		tooltipProps,
 
 		size,
 		rounded,
-		color,
+		color = "foreground",
 		orientation = "horizontal",
 		disabled,
 		showOutline,
@@ -58,67 +58,50 @@ export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
 		maxValue,
 		orientation,
 		onChange: (trigger, value) => handleChangeRange(trigger, value),
+		onChangeComplete: () => handleChangeComplete(),
 	})
 
-	const [values, setControlledValue] = useControlledState({
-		defaultValue,
-		value,
+	const [controlledValue, setControlledValue] = useControlledState({
+		defaultValue: numberClump(defaultValue, minValue, maxValue),
+		value: value ? numberClump(value, minValue, maxValue) : value,
 		setValue: onValueChange,
 	})
 
-	const range = isArray(values)
+	const range = controlledValue.length > 1
 
-	const findClosest = (value: number) => {
-		const is = (prev: number, curr: number, value: number) => {
-			return Math.abs(curr - value) < Math.abs(prev - value)
-				? curr
-				: prev
+	const handleChangeRange = (trigger: number, value: number) => {
+		const findIndex = () => {
+			const closestValue = numberFindClosest(controlledValue, value)
+
+			return controlledValue.findIndex((v) => v === closestValue)
 		}
 
-		return range
-			? values.reduce((prev, curr) => is(prev, curr, value))
-			: value
-	}
-
-	const handleChangeRange = (trigger: RangeTrigger, value: number) => {
-		if (!range) {
-			setControlledValue?.(value as T)
-
-			return
-		}
-
-		const [startValue, endValue] = values
-
-		if (trigger === "track") {
-			setControlledValue?.(
-				findClosest(value) === values.at(0)
-					? [Math.min(value, endValue), endValue] as T
-					: [startValue, Math.max(value, startValue)] as T
-			)
-
-			return
-		}
+		const indexValue = trigger === -1
+			? findIndex()
+			: trigger
 
 		setControlledValue?.(
-			trigger === "thumb-start"
-				? [Math.min(value, endValue), endValue] as T
-				: [startValue, Math.max(value, startValue)] as T
+			controlledValue.with(
+				indexValue,
+				numberClump(
+					value,
+					controlledValue[indexValue - 1] ?? minValue,
+					controlledValue[indexValue + 1] ?? maxValue,
+				)
+			)
 		)
 	}
 
-	const handleChangeInput = (trigger: RangeTrigger) => (ev: ChangeEvent<HTMLInputElement>) => {
+	const handleChangeInput = (trigger: number) => (ev: ChangeEvent<HTMLInputElement>) => {
 		handleChangeRange(trigger, Number(ev.target.value))
 	}
 
-	const getValuePercent = (value: number = 0) => {
-		return (value - minValue) / (maxValue - minValue)
+	const handleChangeComplete = () => {
+		onValueChangeComplete?.(controlledValue)
 	}
 
-	const getThumbPercent = (index: number) => getValuePercent(
-		range
-			? values.at(index)
-			: values
-	)
+	const getValuePercent = (value: number = 0) => (value - minValue) / (maxValue - minValue)
+	const getThumbPercent = (index: number) => getValuePercent(controlledValue[index])
 
 	const offsetThumbValue = [
 		range
@@ -126,16 +109,20 @@ export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
 			: !isUndefined(fillOffset)
 				? getValuePercent(fillOffset)
 				: 0,
-		getThumbPercent(range ? 1 : 0),
+		getThumbPercent(controlledValue.length - 1),
 	]
 
 	const [startOffset, endOffset] = offsetThumbValue.toSorted()
 
-	const textValue = showValueLabel
-		? range
-			? numberFormat("BY", formatOptions).formatRange(values[0], values[1])
-			: numberFormat("BY", formatOptions).format(values)
-		: undefined
+	const getTextValue = () => {
+		return range
+			? numberArrayFormat(formatOptions).formatRange(controlledValue)
+			: numberArrayFormat(formatOptions).format(controlledValue)
+	}
+
+	const steps = showSteps
+		? Math.floor((maxValue - minValue) / step) + 1
+		: 0
 
 	const slots = sliderVariants({
 		size,
@@ -150,41 +137,36 @@ export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
 			: false,
 	})
 
-	const renderThumb = (value: number, index: number) => {
-		const trigger = index === 0
-			? "thumb-start"
-			: "thumb-end"
-
-		return (
-			<div
-				key={trigger}
-				className={slots.thumb({ className: classNames?.thumb })}
-				style={{
-					...(orientation === "horizontal"
-							? { left: `${getThumbPercent(index) * 100}%` }
-							: { bottom: `${getThumbPercent(index) * 100}%` }
-					),
-				}}
-				{...getThumbProps({ trigger })}
-			>
-				<VisuallyHidden>
-					<input
-						type="range"
-						id={`${labelId}-${index}`}
-						aria-labelledby={labelId}
-						aria-orientation={orientation}
-						disabled={disabled}
-						min={minValue}
-						max={maxValue}
-						step={step}
-						aria-valuetext={String(value)}
-						value={value}
-						onChange={handleChangeInput(trigger)}
-					/>
-				</VisuallyHidden>
-			</div>
-		)
-	}
+	const renderThumb = (value: number, index: number) => (
+		<div
+			key={index}
+			className={slots.thumb({ className: classNames?.thumb })}
+			style={{
+				...(orientation === "horizontal"
+						? { left: `${getThumbPercent(index) * 100}%` }
+						: { bottom: `${getThumbPercent(index) * 100}%` }
+				),
+			}}
+			{...getThumbProps({ trigger: index })}
+		>
+			<VisuallyHidden>
+				<input
+					type="range"
+					id={`${labelId}-${index}`}
+					aria-labelledby={labelId}
+					aria-orientation={orientation}
+					disabled={disabled}
+					min={minValue}
+					max={maxValue}
+					step={step}
+					aria-valuetext={String(value)}
+					value={value}
+					onChange={handleChangeInput(index)}
+					onBlur={handleChangeComplete}
+				/>
+			</VisuallyHidden>
+		</div>
+	)
 
 	return (
 		<div
@@ -203,16 +185,12 @@ export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
 					{showValueLabel ? (
 						<output
 							aria-live="off"
-							htmlFor={
-								range
-									? values.map((_, i) => `${labelId}-${i}`).join(" ")
-									: `${labelId}-0`
-							}
+							htmlFor={controlledValue.map((_, index) => `${labelId}-${index}`).join(" ")}
 							className={slots.value({ className: classNames?.value })}
 						>
-							{renderValue && textValue
-								? renderValue({ value: values as T, textValue })
-								: textValue
+							{renderValue
+								? renderValue({ value: controlledValue, textValue: getTextValue() })
+								: getTextValue().join(" ")
 							}
 						</output>
 					) : null}
@@ -229,42 +207,63 @@ export const Slider = <T extends SliderValue>(props: SliderProps<T>) => {
 					<div
 						className={slots.filler({ className: classNames?.filler })}
 						style={{
-							...(orientation === "horizontal" ? {
-								left: `${startOffset * 100}%`,
-								width: `${(endOffset - startOffset) * 100}%`,
-							} : {
-								bottom: `${startOffset * 100}%`,
-								height: `${(endOffset - startOffset) * 100}%`,
-							}),
+							[orientation === "vertical" ? "bottom" : "left"]: `${startOffset * 100}%`,
+							[orientation === "vertical" ? "height" : "width"]: `${(endOffset - startOffset) * 100}%`,
 						}}
 					/>
 
-					{range ? (
-						values.map((value: number, index: number) => (
-							showTooltip ? (
-								<Tooltip
+					{showSteps && Number.isFinite(steps) ? (
+						Array.from({ length: steps }, (_, index) => {
+							const percent = getValuePercent(index * step + minValue)
+
+							return (
+								<div
 									key={index}
+									className={slots.step({ className: classNames?.step })}
+									data-in-range={getValuePercent(index * step + minValue) <= endOffset && percent >= startOffset}
+									style={{
+										[orientation === "vertical" ? "bottom" : "left"]: `${percent * 100}%`,
+									}}
+								/>
+							)
+						})
+					) : null}
+
+					{controlledValue.map((value, index) => (
+						<Fragment key={index}>
+							{showTooltip ? (
+								<Tooltip
 									color={color}
-									content={numberFormat("BY", formatOptions).format(value)}
+									content={numberFormat(formatOptions).format(value)}
 									placement={orientation === "horizontal" ? "top" : "right"}
 									{...tooltipProps}
 								>
 									{renderThumb(value, index)}
 								</Tooltip>
-							) : renderThumb(value, index)
-						))
-					) : (
-						showTooltip ? (
-							<Tooltip
-								color={color}
-								content={numberFormat("BY", formatOptions).format(values)}
-								placement={orientation === "horizontal" ? "top" : "right"}
-								{...tooltipProps}
-							>
-								{renderThumb(values, 0)}
-							</Tooltip>
-						) : renderThumb(values, 0)
-					)}
+							) : (
+								renderThumb(value, index)
+							)}
+						</Fragment>
+					))}
+
+					{marks && marks.length > 0 &&
+						marks.map(({ value, label }, index) => {
+							const percent = getValuePercent(value)
+
+							return (
+								<div
+									key={index}
+									className={slots.mark({ className: classNames?.mark })}
+									data-in-range={percent <= endOffset && percent >= startOffset}
+									style={{
+										[orientation === "vertical" ? "bottom" : "left"]: `${percent * 100}%`,
+									}}
+								>
+									{label}
+								</div>
+							)
+						})
+					}
 				</div>
 
 				{endContent
@@ -281,35 +280,39 @@ type UseRangeOptions = {
 	minValue?: number
 	maxValue?: number
 	orientation?: "horizontal" | "vertical"
-	onChange: (trigger: RangeTrigger, value: number) => void
+	onChange: (trigger: number, value: number) => void
+	onChangeComplete: () => void
 }
 
 type GetThumbProps = {
-	trigger: RangeTrigger
+	trigger: number
 }
 
 const useRange = (options: UseRangeOptions) => {
 	const {
-		step = 0,
+		step = 1,
 		minValue = 0,
 		maxValue = 100,
 		orientation,
 		onChange,
+		onChangeComplete,
 	} = options
 
 	const trackRef = useRef<HTMLDivElement>(null)
-	const triggerEventRef = useRef<RangeTrigger>("track")
+	const triggerEventRef = useRef(-1)
 
-	const onChangeCallbackEvent = useCallbackEvent(onChange)
+	const onChangeEvent = useCallbackEvent(onChange)
+	const onChangeCompleteEvent = useCallbackEvent(onChangeComplete)
 
 	const [dragging, setDragging] = useState(false)
 
 	const startDragging = () => setDragging(true)
 
-	const endDragging = () => {
+	const endDragging = useCallback(() => {
 		setDragging(false)
-		triggerEventRef.current = "track"
-	}
+		onChangeCompleteEvent()
+		triggerEventRef.current = -1
+	}, [onChangeCompleteEvent])
 
 	const roundValue = (value: number) => {
 		return Math.round(value * 100) / 100
@@ -320,11 +323,7 @@ const useRange = (options: UseRangeOptions) => {
 	}, [maxValue, minValue])
 
 	const incrementValue = useCallback((value: number) => {
-		const currentStep = step !== 0
-			? step
-			: 1
-
-		return Math.round(value / currentStep) * currentStep
+		return Math.round(value / step) * step
 	}, [step])
 
 	const getPercentage = useCallback((clientX: number, clientY: number) => {
@@ -355,22 +354,22 @@ const useRange = (options: UseRangeOptions) => {
 	const mouseMoveListener = useCallback((ev: MouseEvent) => {
 		const { clientX, clientY } = ev
 
-		onChangeCallbackEvent(triggerEventRef.current, getPercentage(clientX, clientY))
-	}, [getPercentage, onChangeCallbackEvent])
+		onChangeEvent(triggerEventRef.current, getPercentage(clientX, clientY))
+	}, [getPercentage, onChangeEvent])
 
 	const touchMoveListener = useCallback((ev: TouchEvent) => {
 		const { clientX, clientY } = ev.touches[0]
 
-		onChangeCallbackEvent(triggerEventRef.current, getPercentage(clientX, clientY))
-	}, [getPercentage, onChangeCallbackEvent])
+		onChangeEvent(triggerEventRef.current, getPercentage(clientX, clientY))
+	}, [getPercentage, onChangeEvent])
 
 	const mouseUpListener = useCallback(() => {
 		endDragging()
-	}, [])
+	}, [endDragging])
 
 	const touchEndListener = useCallback(() => {
 		endDragging()
-	}, [])
+	}, [endDragging])
 
 	useEffect(() => {
 		if (!dragging) return
@@ -392,24 +391,24 @@ const useRange = (options: UseRangeOptions) => {
 		const { clientX, clientY } = ev
 
 		startDragging()
-		onChangeCallbackEvent(triggerEventRef.current, getPercentage(clientX, clientY))
+		onChangeEvent(triggerEventRef.current, getPercentage(clientX, clientY))
 	}
 
 	const onTouchStartTrack = (ev: ReactTouchEvent<HTMLDivElement>) => {
 		const { clientX, clientY } = ev.touches[0]
 
 		startDragging()
-		onChangeCallbackEvent(triggerEventRef.current, getPercentage(clientX, clientY))
+		onChangeEvent(triggerEventRef.current, getPercentage(clientX, clientY))
 	}
 
-	const onMouseDownThumb = (trigger: RangeTrigger) => (ev: ReactMouseEvent<HTMLDivElement>) => {
+	const onMouseDownThumb = (trigger: number) => (ev: ReactMouseEvent<HTMLDivElement>) => {
 		ev.stopPropagation()
 		startDragging()
 		triggerEventRef.current = trigger
 
 	}
 
-	const onTouchStartThumb = (trigger: RangeTrigger) => (ev: ReactTouchEvent<HTMLDivElement>) => {
+	const onTouchStartThumb = (trigger: number) => (ev: ReactTouchEvent<HTMLDivElement>) => {
 		ev.stopPropagation()
 		startDragging()
 		triggerEventRef.current = trigger

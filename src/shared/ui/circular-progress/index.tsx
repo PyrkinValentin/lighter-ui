@@ -36,7 +36,7 @@ export const CircularProgress = (props: CircularProgressProps) => {
 	const labelId = useId()
 
 	const textValue = showValueLabel
-		? numberFormat("BY", formatOptions).format(value)
+		? numberFormat(formatOptions).format(value)
 		: undefined
 
 	const center = 16
