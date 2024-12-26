@@ -31,7 +31,7 @@ export const LinearProgress = (props: LinearProgressProps) => {
 	const labelId = useId()
 
 	const textValue = (!indeterminate && showValueLabel)
-		? numberFormat("BY", formatOptions).format(value)
+		? numberFormat(formatOptions).format(value)
 		: undefined
 
 	const percentage = !indeterminate

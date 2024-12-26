@@ -3,20 +3,18 @@ import type { ComponentProps } from "@/shared/types/props"
 import type { TooltipProps } from "@/shared/ui/tooltip/types"
 import type { SliderVariantsProps } from "./variants"
 
-export type SliderValue = number | [number, number]
-
-export type SliderProps<
-	T extends SliderValue
-> = ComponentProps<
+export type SliderProps = ComponentProps<
 	"div",
 	Omit<SliderVariantsProps, "singleThumb"> &
-	SliderOwnProps<T>
+	SliderOwnProps
 >
 
-type SliderOwnProps<T extends SliderValue> = {
+type SliderOwnProps = {
 	label?: ReactNode
-	showValueLabel?: boolean
 	showTooltip?: boolean
+	showValueLabel?: boolean
+	showSteps?: boolean
+	marks?: Mark[]
 	startContent?: ReactNode
 	endContent?: ReactNode
 	formatOptions?: Intl.NumberFormatOptions
@@ -24,14 +22,20 @@ type SliderOwnProps<T extends SliderValue> = {
 	step?: number
 	minValue?: number
 	maxValue?: number
-	value?: T
-	defaultValue?: T
-	onValueChange?: (value: T) => void
-	renderValue?: (props: RenderValueProps<T>) => ReactNode
+	value?: number[]
+	defaultValue?: number[]
+	onValueChange?: (value: number[]) => void
+	onValueChangeComplete?: (value: number[]) => void
+	renderValue?: (props: RenderValueProps) => ReactNode
 	tooltipProps?: TooltipProps
 }
 
-type RenderValueProps<T extends SliderValue> = {
-	value: T
-	textValue: string
+type Mark = {
+	label: string
+	value: number
+}
+
+type RenderValueProps = {
+	value: number[]
+	textValue: string[]
 }

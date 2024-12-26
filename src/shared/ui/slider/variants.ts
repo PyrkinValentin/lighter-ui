@@ -12,7 +12,7 @@ export const sliderVariants = tv({
 		value: "",
 		step: "absolute h-1.5 w-1.5 rounded-full bg-default-300/50 data-[in-range=true]:bg-background/50",
 		mark: [
-			"absolute text-sm cursor-default opacity-50 data-[in-range=true]:opacity-100 transition-opacity",
+			"absolute text-sm cursor-pointer opacity-50 data-[in-range=true]:opacity-100 transition-opacity",
 			"motion-reduce:transition-none",
 		],
 		trackWrapper: "relative flex gap-2",
@@ -127,13 +127,6 @@ export const sliderVariants = tv({
 				thumb: "cursor-default",
 			},
 		},
-		// hasMarks: {
-		// 	true: {
-		// 		base: "mb-5",
-		// 		mark: "cursor-pointer",
-		// 	},
-		// 	false: "",
-		// },
 		showOutline: {
 			true: {
 				thumb: "ring-2 ring-background",
